@@ -21,7 +21,8 @@ Outputs (in output/):
     backtest_ic.csv          monthly IC / RankIC for CMM vs SM
     equity_curve.png         CMM/SM top-K vs equal-weight universes (CMM & SM)
     binned_performance.png   CMM signal-sorted quantile bins (G1..G{BINS}),
-                             bar + line growth of each bin
+                             bar + line of each bin's performance (growth of 1.0
+                             or cumulative return, per --axis)
     backtest_summary.txt     printed + saved narrative
 """
 
@@ -238,6 +239,20 @@ def metrics(nav):
     }
 
 
+def axis_series(nav, axis):
+    """
+    Purpose: Convert a NAV series into the y-axis quantity selected by --axis.
+        "growth"  -> cumulative growth of 1.0 (nav / nav[0])
+        "returns" -> cumulative return (nav / nav[0] - 1), starting at 0.0
+    Used by: main() plotting code (equity curve + binned performance).
+    Returns: pd.Series indexed like `nav` (same length).
+    """
+    g = nav / nav.iloc[0]
+    if axis == "growth":
+        return g
+    return (g - 1.0)
+
+
 def ic_stats(dates, idx, close_p, sig, test_month_ends, tradable_fn):
     """
     Purpose: Compute monthly cross-sectional IC and RankIC for the CMM and SM
@@ -346,8 +361,23 @@ def main():
     ap.add_argument("--bins", type=int, default=BINS,
                     help="number of signal-sorted quantile bins for "
                          "binned_performance.png (default 10 = deciles)")
+    ap.add_argument("--axis", type=str, choices=["growth", "returns"],
+                    default="growth",
+                    help="y-axis for the three plots: 'growth' = growth of 1.0 "
+                         "(default), 'returns' = cumulative return")
     args = ap.parse_args()
     bins = args.bins
+    axis = args.axis
+    if axis == "returns":
+        YLABEL = "Cumulative Returns"
+        BIN_BAR_TITLE = "Final cumulative return per bin"
+        BIN_LINE_TITLE = "Cumulative return over time per bin"
+        BIN_HLINE = 0.0
+    else:
+        YLABEL = "Growth of 1.0"
+        BIN_BAR_TITLE = "Final growth of 1.0 per bin"
+        BIN_LINE_TITLE = "Growth over time per bin"
+        BIN_HLINE = 1.0
 
     sig_path = (os.path.join(OUT_DIR, f"signals_s{args.stocks}.parquet")
                 if args.stocks is not None else SIG_PATH)
@@ -425,8 +455,7 @@ def main():
     for name, (col, topk) in {
         f"CMM_top{TOP_K}": ("cmm_signal", TOP_K),
         f"SM_top{TOP_K}": ("sm_signal", TOP_K),
-        "Universe_CMM": ("cmm_signal", None),   # all tradable, equal weight
-        "Universe_SM": ("sm_signal", None),
+        "Universe_EW": ("cmm_signal", None),   # all tradable, equal weight
     }.items():
         sched, avg_sig = build_schedule(col, topk)
         strategies[name] = sched
@@ -470,20 +499,26 @@ def main():
     # distinct color/linestyle so all four show up in the legend and any future
     # divergence (e.g. signal-weighted sizing) is visible.
     plt.figure(figsize=(11, 6))
+    ax = plt.gca()
     plot_style = {
         f"CMM_top{TOP_K}":  {"color": "tab:red",    "linestyle": "-"},
         f"SM_top{TOP_K}":   {"color": "tab:blue",   "linestyle": "-"},
-        "Universe_CMM":     {"color": "tab:orange",  "linestyle": ":"},
-        "Universe_SM":      {"color": "tab:cyan", "linestyle": ":"},
+        "Universe_EW":     {"color": "tab:orange",  "linestyle": ":"},
     }
-    for name in [f"CMM_top{TOP_K}", f"SM_top{TOP_K}", "Universe_CMM", "Universe_SM"]:
+    for name in [f"CMM_top{TOP_K}", f"SM_top{TOP_K}", "Universe_EW"]:
         nav = navs[name]
         if len(nav) == 0:
             continue
-        nav = nav / nav.iloc[0]  # normalize to growth of 1.0
-        plt.plot(nav.index, nav.values, label=name, linewidth=1.6, **plot_style[name])
+        y = axis_series(nav, axis)
+        plt.plot(y.index, y.values, label=name, linewidth=1.6, **plot_style[name])
+        ax.annotate(f"{y.iloc[-1]:.2f}", (y.index[-1], y.iloc[-1]),
+                    xytext=(6, 0), textcoords="offset points",
+                    color=plot_style[name]["color"], fontsize=9,
+                    va="center", ha="left")
+    xlo, xhi = ax.get_xlim()
+    ax.set_xlim(xlo, xhi + (xhi - xlo) * 0.06)   # room for the end-of-line labels
     plt.title("Strategies Performance Comparison")
-    plt.ylabel("Growth of 1.0")
+    plt.ylabel(YLABEL)
     plt.legend()
     plt.grid(alpha=0.3)
     plt.tight_layout()
@@ -495,13 +530,13 @@ def main():
     bin_schedules, bin_sig_strength = build_bin_schedules(
         sig, dates, idx, test_month_ends, tradable_fn, "cmm_signal", bins)
     bin_navs = {}
-    bin_growth = {}
+    bin_final = {}
     bin_turns = {}
     for g in range(1, bins + 1):
         nav, to = run_portfolio(dates, idx, close_p, ret_p, bin_schedules[g], f"CMM_G{g}")
         bin_navs[g] = nav
         bin_turns[g] = to
-        bin_growth[g] = nav.iloc[-1] / nav.iloc[0] if len(nav) > 1 else np.nan
+        bin_final[g] = axis_series(nav, axis).iloc[-1] if len(nav) > 1 else np.nan
 
     cmap = plt.cm.coolwarm                                 # G1 (cold) -> G{bins} (hot)
     bin_color = {g: cmap((g - 1) / max(bins - 1, 1)) for g in range(1, bins + 1)}
@@ -513,11 +548,11 @@ def main():
 
     # Top panel: bar chart of final cumulative growth per bin.
     ax = axes[0]
-    heights = [bin_growth[g] for g in range(1, bins + 1)]
+    heights = [bin_final[g] for g in range(1, bins + 1)]
     bars = ax.bar(labels, heights, color=[bin_color[g] for g in range(1, bins + 1)])
-    ax.axhline(1.0, color="black", linestyle="--", linewidth=1, alpha=0.6)
-    ax.set_title("Final growth of 1.0 per bin")
-    ax.set_ylabel("Growth of 1.0")
+    ax.axhline(BIN_HLINE, color="black", linestyle="--", linewidth=1, alpha=0.6)
+    ax.set_title(BIN_BAR_TITLE)
+    ax.set_ylabel(YLABEL)
     ax.grid(axis="y", alpha=0.3)
     finite_h = [h for h in heights if np.isfinite(h)]
     max_h = max(finite_h) if finite_h else 1.0
@@ -532,11 +567,16 @@ def main():
         nav = bin_navs[g]
         if len(nav) < 2:
             continue
-        nav = nav / nav.iloc[0]
-        ax.plot(nav.index, nav.values, label=f"G{g}", linewidth=1.4,
+        y = axis_series(nav, axis)
+        ax.plot(y.index, y.values, label=f"G{g}", linewidth=1.4,
                 color=bin_color[g])
-    ax.set_title("Growth over time per bin")
-    ax.set_ylabel("Growth of 1.0")
+        ax.annotate(f"{y.iloc[-1]:.2f}", (y.index[-1], y.iloc[-1]),
+                    xytext=(6, 0), textcoords="offset points",
+                    color=bin_color[g], fontsize=8, va="center", ha="left")
+    xlo, xhi = ax.get_xlim()
+    ax.set_xlim(xlo, xhi + (xhi - xlo) * 0.06)   # room for the end-of-line labels
+    ax.set_title(BIN_LINE_TITLE)
+    ax.set_ylabel(YLABEL)
     ax.set_xlabel("Date")
     ax.legend(ncol=2, fontsize=8, loc="upper left")
     ax.grid(alpha=0.3)

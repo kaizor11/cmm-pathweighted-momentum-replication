@@ -3,10 +3,21 @@ Test window: 2020-01-23 -> 2026-06-30
 Universe: 982 stocks, monthly filter (20d amount>=20M).
 
 Performance:
-  CMM_top100   ann_ret=15.72%  vol=24.94%  sharpe=0.71  maxDD=-33.49%  turnover=85.52%  avg_signal=1.2946
-  SM_top100    ann_ret=4.90%  vol=28.65%  sharpe=0.31  maxDD=-52.25%  turnover=63.39%  avg_signal=1.7705
-  Universe_CMM ann_ret=12.09%  vol=23.35%  sharpe=0.61  maxDD=-35.09%  turnover=22.62%  avg_signal=-0.0000
-  Universe_SM  ann_ret=12.08%  vol=23.35%  sharpe=0.61  maxDD=-35.13%  turnover=22.66%  avg_signal=0.0000
+  CMM_top200   ann_ret=18.10%  vol=24.13%  sharpe=0.81  maxDD=-29.35%  turnover=69.80%  avg_signal=0.9854
+  SM_top200    ann_ret=7.99%  vol=26.83%  sharpe=0.42  maxDD=-47.99%  turnover=55.47%  avg_signal=1.2412
+  Universe_EW  ann_ret=12.09%  vol=23.35%  sharpe=0.61  maxDD=-35.09%  turnover=22.62%  avg_signal=-0.0000
+
+CMM Binned Performance (ordered highest signal -> lowest):
+  G10          ann_ret=15.73%  vol=25.20%  sharpe=0.71  maxDD=-33.82%  turnover=89.83%  avg_signal=1.4095
+  G9           ann_ret=18.13%  vol=23.93%  sharpe=0.82  maxDD=-28.74%  turnover=125.27%  avg_signal=0.8009
+  G8           ann_ret=13.18%  vol=23.47%  sharpe=0.65  maxDD=-34.50%  turnover=137.24%  avg_signal=0.5401
+  G7           ann_ret=13.64%  vol=23.20%  sharpe=0.67  maxDD=-30.72%  turnover=142.39%  avg_signal=0.3604
+  G6           ann_ret=9.14%  vol=23.13%  sharpe=0.49  maxDD=-33.19%  turnover=144.21%  avg_signal=0.2109
+  G5           ann_ret=10.23%  vol=23.34%  sharpe=0.53  maxDD=-38.40%  turnover=143.52%  avg_signal=0.0481
+  G4           ann_ret=6.34%  vol=23.50%  sharpe=0.38  maxDD=-43.48%  turnover=138.31%  avg_signal=-0.1527
+  G3           ann_ret=3.44%  vol=24.24%  sharpe=0.26  maxDD=-52.58%  turnover=132.50%  avg_signal=-0.4297
+  G2           ann_ret=3.96%  vol=24.99%  sharpe=0.28  maxDD=-48.07%  turnover=117.31%  avg_signal=-0.8339
+  G1           ann_ret=4.31%  vol=26.41%  sharpe=0.29  maxDD=-52.37%  turnover=82.76%  avg_signal=-1.9898
 
 Monthly IC (signal vs next-21d return):
   CMM        meanIC=0.0269  ICIR=0.24  pos_ratio=65.38%
