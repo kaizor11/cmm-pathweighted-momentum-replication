@@ -1,0 +1,15 @@
+=== CMM baseline backtest (A-share rules) ===
+Test window: 2020-01-23 -> 2026-06-30
+Universe: 982 stocks, monthly filter (20d amount>=20M).
+
+Performance:
+  CMM_top100   ann_ret=15.72%  vol=24.94%  sharpe=0.71  maxDD=-33.49%  turnover=85.52%  avg_signal=1.2946
+  SM_top100    ann_ret=4.90%  vol=28.65%  sharpe=0.31  maxDD=-52.25%  turnover=63.39%  avg_signal=1.7705
+  Universe_CMM ann_ret=12.09%  vol=23.35%  sharpe=0.61  maxDD=-35.09%  turnover=22.62%  avg_signal=-0.0000
+  Universe_SM  ann_ret=12.08%  vol=23.35%  sharpe=0.61  maxDD=-35.13%  turnover=22.66%  avg_signal=0.0000
+
+Monthly IC (signal vs next-21d return):
+  CMM        meanIC=0.0269  ICIR=0.24  pos_ratio=65.38%
+  SM         meanIC=-0.0036  ICIR=-0.02  pos_ratio=50.00%
+  CMM_rank   meanIC=0.0509  ICIR=0.39  pos_ratio=65.38%
+  SM_rank    meanIC=-0.0253  ICIR=-0.15  pos_ratio=50.00%

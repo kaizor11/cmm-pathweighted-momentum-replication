@@ -1,0 +1,30 @@
+# ============================================================
+#  Files (repo root)
+# ============================================================
+CLAUDE.md
+test.ipynb
+
+# Secrets — never commit DB credentials
+.env
+
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Large regenerable data — exceed GitHub's 100 MB/file hard limit.
+# Recreated via `python data.py --fetch` / `python data.py`.
+input/ashare_2015-2026.parquet
+input/ashare_2015-2026_features.parquet
+input/ashare_2015-2026_raw.parquet
+
+# ============================================================
+#  Directories — track ONLY input/ and output/
+#  (archive/, .workbuddy/, .vscode/, etc. are all ignored)
+# ============================================================
+/*/
+# !/input/ # files too large for push
+!/output/

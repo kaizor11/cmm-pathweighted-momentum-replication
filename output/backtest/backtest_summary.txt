@@ -1,0 +1,27 @@
+=== CMM baseline backtest (A-share rules) ===
+Test window: 2020-01-23 -> 2026-06-30
+Universe: 5359 stocks, monthly filter (20d amount>=20M).
+
+Performance:
+  CMM_top200   ann_ret=16.70%  vol=27.51%  sharpe=0.70  maxDD=-46.50%  turnover=115.08%  avg_signal=1.8956
+  SM_top200    ann_ret=1.04%  vol=31.01%  sharpe=0.19  maxDD=-59.72%  turnover=73.13%  avg_signal=2.5231
+  Universe_CMM ann_ret=12.05%  vol=23.06%  sharpe=0.61  maxDD=-33.88%  turnover=22.39%  avg_signal=-0.0000
+  Universe_SM  ann_ret=12.08%  vol=23.07%  sharpe=0.61  maxDD=-33.88%  turnover=22.39%  avg_signal=0.0000
+
+CMM Binned Performance (ordered highest signal -> lowest):
+  G10          ann_ret=16.80%  vol=26.36%  sharpe=0.72  maxDD=-42.19%  turnover=103.85%  avg_signal=1.5535
+  G9           ann_ret=14.78%  vol=24.33%  sharpe=0.69  maxDD=-37.30%  turnover=140.58%  avg_signal=0.8093
+  G8           ann_ret=12.06%  vol=23.55%  sharpe=0.60  maxDD=-38.25%  turnover=150.00%  avg_signal=0.5104
+  G7           ann_ret=11.76%  vol=23.30%  sharpe=0.59  maxDD=-34.87%  turnover=154.59%  avg_signal=0.3065
+  G6           ann_ret=10.99%  vol=22.72%  sharpe=0.57  maxDD=-32.40%  turnover=153.89%  avg_signal=0.1546
+  G5           ann_ret=9.82%  vol=22.64%  sharpe=0.53  maxDD=-30.91%  turnover=152.56%  avg_signal=0.0181
+  G4           ann_ret=9.34%  vol=23.08%  sharpe=0.50  maxDD=-34.17%  turnover=152.33%  avg_signal=-0.1433
+  G3           ann_ret=6.92%  vol=23.09%  sharpe=0.41  maxDD=-38.65%  turnover=148.57%  avg_signal=-0.3781
+  G2           ann_ret=4.57%  vol=23.57%  sharpe=0.31  maxDD=-45.61%  turnover=136.10%  avg_signal=-0.7922
+  G1           ann_ret=-1.44%  vol=25.37%  sharpe=0.07  maxDD=-53.49%  turnover=97.58%  avg_signal=-2.0452
+
+Monthly IC (signal vs next-21d return):
+  CMM        meanIC=0.0279  ICIR=0.29  pos_ratio=69.23%
+  SM         meanIC=-0.0084  ICIR=-0.05  pos_ratio=50.00%
+  CMM_rank   meanIC=0.0461  ICIR=0.38  pos_ratio=73.08%
+  SM_rank    meanIC=-0.0286  ICIR=-0.18  pos_ratio=50.00%

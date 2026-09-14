@@ -1,0 +1,11 @@
+retrain 2021-01-01: best_val_IC=0.0920  train_months=36 val_months=12
+retrain 2021-07-01: best_val_IC=0.0383  train_months=36 val_months=12
+retrain 2022-01-01: best_val_IC=0.0215  train_months=36 val_months=12
+retrain 2022-07-01: best_val_IC=0.0589  train_months=36 val_months=12
+retrain 2023-01-01: best_val_IC=0.0418  train_months=36 val_months=12
+retrain 2023-07-01: best_val_IC=0.0503  train_months=36 val_months=12
+retrain 2024-01-01: best_val_IC=0.0553  train_months=36 val_months=12
+retrain 2024-07-01: best_val_IC=0.0203  train_months=36 val_months=12
+retrain 2025-01-01: best_val_IC=-0.0010  train_months=36 val_months=12
+retrain 2025-07-01: best_val_IC=0.0731  train_months=36 val_months=12
+retrain 2026-01-01: best_val_IC=0.0669  train_months=36 val_months=12
